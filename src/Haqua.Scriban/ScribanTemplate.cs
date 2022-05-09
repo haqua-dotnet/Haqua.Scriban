@@ -10,9 +10,8 @@ public class ScribanTemplate
 {
     private readonly HtmlMinifier _htmlMinifier;
     private readonly ScribanTemplateOptions _options;
-    private readonly Dictionary<string, string> _templates = new();
-
-    private ITemplateLoader? _templateLoader;
+    private readonly IncludeFromDictionary _templateLoader = new();
+    private readonly Dictionary<string, Template> _templates = new();
 
     public ScribanTemplate(ScribanTemplateOptions options)
     {
@@ -38,9 +37,12 @@ public class ScribanTemplate
         var context = new TemplateContext { TemplateLoader = _templateLoader };
         context.PushGlobal(scriptObject);
 
-        var template = Template.Parse(_templates[viewPath]);
-        var result = await template.RenderAsync(context).ConfigureAwait(false);
+        foreach (var template in _templates)
+        {
+            context.CachedTemplates.Add(template.Key, template.Value);
+        }
 
+        var result = await _templates[viewPath].RenderAsync(context).ConfigureAwait(false);
         return result;
     }
 
@@ -57,8 +59,6 @@ public class ScribanTemplate
         {
             await LoadTemplate(file).ConfigureAwait(false);
         }
-
-        _templateLoader = new IncludeFromDictionary(_templates);
     }
 
     private async Task LoadTemplate(IFileInfo file)
@@ -76,11 +76,11 @@ public class ScribanTemplate
         if (_options.MinifyTemplate)
         {
             var viewMinified = _htmlMinifier.Minify(fileValue, false);
-            _templates[fileName] = viewMinified.MinifiedContent;
+            _templates[fileName] = Template.Parse(viewMinified.MinifiedContent);
         }
         else
         {
-            _templates[fileName] = fileValue;
+            _templates[fileName] = Template.Parse(fileValue);
         }
     }
 

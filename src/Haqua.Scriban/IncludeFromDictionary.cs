@@ -6,13 +6,6 @@ namespace Haqua.Scriban;
 
 internal class IncludeFromDictionary : ITemplateLoader
 {
-    private readonly Dictionary<string, string> _templates;
-
-    public IncludeFromDictionary(Dictionary<string, string> templates)
-    {
-        _templates = templates;
-    }
-
     public string GetPath(TemplateContext context, SourceSpan callerSpan, string templateName)
     {
         return templateName;
@@ -20,11 +13,11 @@ internal class IncludeFromDictionary : ITemplateLoader
 
     public string Load(TemplateContext context, SourceSpan callerSpan, string templatePath)
     {
-        return _templates[templatePath];
+        return "";
     }
 
     public ValueTask<string> LoadAsync(TemplateContext context, SourceSpan callerSpan, string templatePath)
     {
-        return ValueTask.FromResult(_templates[templatePath]);
+        return ValueTask.FromResult("");
     }
 }
