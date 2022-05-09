@@ -1,4 +1,5 @@
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Primitives;
 using Scriban;
 using Scriban.Runtime;
 using WebMarkupMin.Core;
@@ -19,8 +20,7 @@ public class ScribanTemplate : IDisposable
 
         _htmlMinifier = new HtmlMinifier();
 
-        if (_options.WatchChanged)
-            Task.Run(() => WatchViewDirectoryChangeAsync());
+        if (_options.WatchChanged) WatchViewDirectoryChange();
     }
 
     public void Dispose()
@@ -75,19 +75,10 @@ public class ScribanTemplate : IDisposable
         }
     }
 
-    private async Task WatchViewDirectoryChangeAsync()
+    private void WatchViewDirectoryChange()
     {
-        while (true)
-        {
-            var token = _options.FileProvider!.Watch("**/*.html");
-            var taskCompletion = new TaskCompletionSource<object?>();
-
-            token.RegisterChangeCallback(
-                state => ((TaskCompletionSource<object?>)state).TrySetResult(null),
-                taskCompletion);
-
-            await taskCompletion.Task.ConfigureAwait(false);
-            await LoadTemplateFromDirectory().ConfigureAwait(false);
-        }
+        ChangeToken.OnChange(
+            () => _options.FileProvider!.Watch("**/*.html"),
+            async () => await LoadTemplateFromDirectory().ConfigureAwait(false));
     }
 }
