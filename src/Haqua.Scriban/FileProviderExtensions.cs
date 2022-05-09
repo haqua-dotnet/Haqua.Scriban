@@ -14,10 +14,17 @@ public static class FileProviderExtensions
         {
             if (file.IsDirectory)
             {
-                if (includeDirectories) yield return file;
+                if (includeDirectories)
+                {
+                    yield return file;
+                }
 
-                var subDirectoryFiles = fileProvider.GetRecursiveFiles(Path.Combine(path, file.Name), includeDirectories);
-                foreach (var subDirectoryFile in subDirectoryFiles) yield return subDirectoryFile;
+                var subDirectoryFiles =
+                    fileProvider.GetRecursiveFiles(Path.Combine(path, file.Name), includeDirectories);
+                foreach (var subDirectoryFile in subDirectoryFiles)
+                {
+                    yield return subDirectoryFile;
+                }
             }
             else
             {

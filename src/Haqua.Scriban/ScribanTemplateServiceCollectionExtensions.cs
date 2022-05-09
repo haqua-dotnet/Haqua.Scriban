@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.FileProviders;
 
 namespace Haqua.Scriban;
 
@@ -16,10 +15,12 @@ public static class ScribanTemplateServiceCollectionExtensions
             if (options?.FileProvider == null)
             {
                 var webHostEnv = provider.GetService<IWebHostEnvironment>();
-                var fileProvider = new PhysicalFileProvider(Path.Combine(webHostEnv!.ContentRootPath, "views"));
+                var fileProvider = webHostEnv!.ContentRootFileProvider;
 
                 if (options == null)
+                {
                     return new ScribanTemplate(new ScribanTemplateOptions { FileProvider = fileProvider });
+                }
 
                 options.FileProvider = fileProvider;
             }

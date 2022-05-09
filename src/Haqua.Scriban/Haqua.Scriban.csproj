@@ -7,16 +7,16 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+        <FrameworkReference Include="Microsoft.AspNetCore.App"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Scriban" Version="5.4.4" />
-        <PackageReference Include="WebMarkupMin.Core" Version="2.9.0" />
+        <PackageReference Include="Scriban" Version="5.4.4"/>
+        <PackageReference Include="WebMarkupMin.Core" Version="2.9.0"/>
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="Haqua.Scriban.csproj.DotSettings" />
+        <None Remove="Haqua.Scriban.csproj.DotSettings"/>
     </ItemGroup>
 
 </Project>

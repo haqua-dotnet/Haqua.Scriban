@@ -39,7 +39,9 @@ public class ScribanView : IResult
     public async Task ExecuteAsync(HttpContext httpContext)
     {
         if (httpContext.RequestServices.GetService(typeof(ScribanTemplate)) is not ScribanTemplate scribanTemplate)
+        {
             throw new NullReferenceException();
+        }
 
         var template = await scribanTemplate.RenderAsync(_views, _model);
 

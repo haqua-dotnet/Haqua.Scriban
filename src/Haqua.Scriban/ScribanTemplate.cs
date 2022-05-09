@@ -6,7 +6,7 @@ using WebMarkupMin.Core;
 
 namespace Haqua.Scriban;
 
-public class ScribanTemplate : IDisposable
+public class ScribanTemplate
 {
     private readonly HtmlMinifier _htmlMinifier;
     private readonly ScribanTemplateOptions _options;
@@ -20,18 +20,18 @@ public class ScribanTemplate : IDisposable
 
         _htmlMinifier = new HtmlMinifier();
 
-        if (_options.WatchChanged) WatchViewDirectoryChange();
-    }
-
-    public void Dispose()
-    {
-        _options.FileProvider?.Dispose();
-        GC.SuppressFinalize(this);
+        if (_options.WatchChanged)
+        {
+            WatchViewDirectoryChange();
+        }
     }
 
     public async Task<string> RenderAsync(string viewPath, object? model = null)
     {
-        if (_templates.Count == 0) await LoadTemplateFromDirectory().ConfigureAwait(false);
+        if (_templates.Count == 0)
+        {
+            await LoadTemplateFromDirectory().ConfigureAwait(false);
+        }
 
         var scriptObject = new ScriptObject { ["model"] = model };
 
@@ -46,10 +46,17 @@ public class ScribanTemplate : IDisposable
 
     private async Task LoadTemplateFromDirectory()
     {
+        if (!_options.FileProvider!.GetDirectoryContents("views").Exists)
+        {
+            throw new DirectoryNotFoundException(_options.FileProvider.GetFileInfo("views").PhysicalPath);
+        }
+
         _templates.Clear();
 
-        foreach (var file in _options.FileProvider!.GetRecursiveFiles(""))
+        foreach (var file in _options.FileProvider!.GetRecursiveFiles("views"))
+        {
             await LoadTemplate(file).ConfigureAwait(false);
+        }
 
         _templateLoader = new IncludeFromDictionary(_templates);
     }
@@ -60,8 +67,10 @@ public class ScribanTemplate : IDisposable
         using var streamReader = new StreamReader(readStream);
 
         var fileValue = await streamReader.ReadToEndAsync().ConfigureAwait(false);
+
         var fileName = file.PhysicalPath
-            .Replace(_options.FileProvider!.Root, "")
+            .Replace(_options.FileProvider!.GetFileInfo("views").PhysicalPath, "")
+            .TrimStart(Path.DirectorySeparatorChar)
             .Replace("\\", "/");
 
         if (_options.MinifyTemplate)
@@ -79,6 +88,6 @@ public class ScribanTemplate : IDisposable
     {
         ChangeToken.OnChange(
             () => _options.FileProvider!.Watch("**/*.html"),
-            async () => await LoadTemplateFromDirectory().ConfigureAwait(false));
+            () => LoadTemplateFromDirectory().ConfigureAwait(false));
     }
 }
