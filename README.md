@@ -16,7 +16,10 @@ var app = builder.Build();
 
 app.UseStaticFiles();
 
-app.MapGet("/", () => new ScribanView("pages/home.html", new { Name = "Scriban Template" }));
+app.MapGet("/", () => Results.Extensions.ScribanView("pages/home.html", new { Name = "Scriban Template" }));
+
+// or
+// app.MapGet("/", () => new ScribanView("pages/home.html", new { Name = "Scriban Template" }));
 
 app.Run();
 ```
