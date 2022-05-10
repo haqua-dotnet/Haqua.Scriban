@@ -27,13 +27,12 @@ public class ScribanTemplate
         }
     }
 
-    public async Task<string> RenderAsync(string viewPath, object? model = null)
+    /// <summary>
+    /// Render template from specified viewPath.
+    /// </summary>
+    /// <returns>Rendered template</returns>
+    public ValueTask<string> RenderAsync(string viewPath, object? model = null)
     {
-        if (_templates.Count == 0)
-        {
-            await LoadTemplateFromDirectoryAsync().ConfigureAwait(false);
-        }
-
         var scriptObject = new ScriptObject { ["model"] = model };
 
         var context = new TemplateContext { TemplateLoader = _templateLoader };
@@ -44,11 +43,10 @@ public class ScribanTemplate
             context.CachedTemplates.Add(template.Key, template.Value);
         }
 
-        var result = await _templates[viewPath].RenderAsync(context).ConfigureAwait(false);
-        return result;
+        return _templates[viewPath].RenderAsync(context);
     }
 
-    private async Task LoadTemplateFromDirectoryAsync()
+    internal async Task LoadTemplateFromDirectoryAsync()
     {
         if (!_options.FileProvider!.GetDirectoryContents(Views).Exists)
         {
