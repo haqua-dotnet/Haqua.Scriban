@@ -8,6 +8,8 @@ namespace Haqua.Scriban;
 
 public class ScribanTemplate
 {
+    private const string Views = "views";
+
     private readonly HtmlMinifier _htmlMinifier;
     private readonly ScribanTemplateOptions _options;
     private readonly IncludeFromDictionary _templateLoader = new();
@@ -29,7 +31,7 @@ public class ScribanTemplate
     {
         if (_templates.Count == 0)
         {
-            await LoadTemplateFromDirectory().ConfigureAwait(false);
+            await LoadTemplateFromDirectoryAsync().ConfigureAwait(false);
         }
 
         var scriptObject = new ScriptObject { ["model"] = model };
@@ -46,22 +48,22 @@ public class ScribanTemplate
         return result;
     }
 
-    private async Task LoadTemplateFromDirectory()
+    private async Task LoadTemplateFromDirectoryAsync()
     {
-        if (!_options.FileProvider!.GetDirectoryContents("views").Exists)
+        if (!_options.FileProvider!.GetDirectoryContents(Views).Exists)
         {
-            throw new DirectoryNotFoundException(_options.FileProvider.GetFileInfo("views").PhysicalPath);
+            throw new DirectoryNotFoundException(_options.FileProvider.GetFileInfo(Views).PhysicalPath);
         }
 
         _templates.Clear();
 
-        foreach (var file in _options.FileProvider!.GetRecursiveFiles("views"))
+        foreach (var file in _options.FileProvider!.GetRecursiveFiles(Views))
         {
-            await LoadTemplate(file).ConfigureAwait(false);
+            await LoadTemplateAsync(file).ConfigureAwait(false);
         }
     }
 
-    private async Task LoadTemplate(IFileInfo file)
+    private async Task LoadTemplateAsync(IFileInfo file)
     {
         await using var readStream = file.CreateReadStream();
         using var streamReader = new StreamReader(readStream);
@@ -69,7 +71,7 @@ public class ScribanTemplate
         var fileValue = await streamReader.ReadToEndAsync().ConfigureAwait(false);
 
         var fileName = file.PhysicalPath
-            .Replace(_options.FileProvider!.GetFileInfo("views").PhysicalPath, "")
+            .Replace(_options.FileProvider!.GetFileInfo(Views).PhysicalPath, "")
             .TrimStart(Path.DirectorySeparatorChar)
             .Replace("\\", "/");
 
@@ -88,6 +90,6 @@ public class ScribanTemplate
     {
         ChangeToken.OnChange(
             () => _options.FileProvider!.Watch("**/*.html"),
-            () => LoadTemplateFromDirectory().ConfigureAwait(false));
+            () => LoadTemplateFromDirectoryAsync().ConfigureAwait(false));
     }
 }
