@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 #
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{D880B711-68AB-4F31-A774-2EBE2CDAE4BD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Haqua.Scriban.Web", "src\haqua.scriban.web\Haqua.Scriban.Web.csproj", "{3624C614-008D-43D1-8C5E-78E2F845A660}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Haqua.Scriban.Example", "src\haqua.scriban.example\Haqua.Scriban.Example.csproj", "{3624C614-008D-43D1-8C5E-78E2F845A660}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Haqua.Scriban", "src\Haqua.Scriban\Haqua.Scriban.csproj", "{C7EA9FD1-BAF2-4B18-B46D-D673D2B66DE6}"
 EndProject
