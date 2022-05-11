@@ -8,7 +8,7 @@
     }
   },
   "profiles": {
-    "Haqua.Scriban.Web": {
+    "Haqua.Scriban.Example.Web": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:7105;http://localhost:5105",
