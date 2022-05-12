@@ -1,0 +1,68 @@
+{{ capture title }} Home {{ end }}
+
+{{ capture body }}
+<div class="w-96 mx-auto p-8">
+    <h1 class="text-2xl font-bold mb-8">Todos</h1>
+
+    {{ if (model.todos | array.size) == 0}}
+    <h1 class="my-8 text-grey">Todos show up here, add a new one!</h1>
+    {{ end }}
+
+    {{ for todo in model.todos | array.sort "is_checked" }}
+    <div class="check-todo flex gap-4 rounded-full border-dashed border-2 border-indigo-600 hover:bg-indigo-100 px-4 py-2 my-4"
+         id="{{ todo.id }}">
+        <div class="flex-1 text-lg {{ if todo.is_checked }}line-through{{ end }}">{{ todo.todo }}</div>
+        <i class="delete-todo material-icons" id="{{ todo.id }}">delete</i>
+    </div>
+    {{ end }}
+
+    <div class="flex gap-4 mt-8">
+        <input class="flex-1 rounded-full bg-gray-100 hover:bg-gray-300 focus:outline-none px-4 py-2 placeholder-grey hover:placeholder-black" id="todo-input"
+               placeholder="Add new todo"/>
+        <button class="rounded-full bg-indigo-700 text-white px-4 py-2" id="add-todo">Add</button>
+    </div>
+</div>
+{{ end }}
+
+{{ capture script }}
+<script>
+    $(document).ready(function () {
+        $(".delete-todo").click(function () {
+            $.ajax({
+                url: `/api/todo/${this.id}`,
+                contentType: 'application/json',
+                type: 'DELETE',
+                success: function (data, status) {
+                    location.reload();
+                }
+            });
+        });
+
+        $(".check-todo").click(function () {
+            $.ajax({
+                url: `/api/todo/${this.id}`,
+                contentType: 'application/json',
+                type: 'POST',
+                success: function (data, status) {
+                    location.reload();
+                }
+            });
+        });
+
+        $("#add-todo").click(function () {
+            let data = {todo: $("#todo-input").val()};
+            $.ajax({
+                url: "/api/todo",
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                type: 'POST',
+                success: function (data, status) {
+                    location.reload();
+                }
+            });
+        });
+    });
+</script>
+{{ end }}
+
+{{ include "layouts/_layout.html" }}

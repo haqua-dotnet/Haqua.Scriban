@@ -1,0 +1,13 @@
+{
+  "name": "haqua.scriban.example.tailwindcss",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "tailwind:build": "npx tailwindcss -i ./wwwroot/css/styles.css -o ./wwwroot/css/site.css --minify",
+    "tailwind:watch": "npx tailwindcss -i ./wwwroot/css/styles.css -o ./wwwroot/css/site.css --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
